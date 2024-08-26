@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
+import 'package:flutter/services.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter_login_example/constants.dart';
 import 'package:flutter_login_example/custom_route.dart';
@@ -49,6 +50,12 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Future<ByteData> future =
+        rootBundle.load("assets/images/captcha.jpg").then((value) async {
+      await Future.delayed(const Duration(seconds: 5));
+      return value;
+    });
+
     return FlutterLogin(
       title: Constants.appName,
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -275,6 +282,25 @@ class LoginScreen extends StatelessWidget {
         // Show new password dialog
       },
       headerWidget: const IntroWidget(),
+      captchaTextRatio: 2 / 3,
+      captchaWidget: FutureBuilder(
+        future: future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            final bytes = snapshot.data!.buffer.asUint8List();
+            return Image.memory(
+              bytes,
+              height: 40,
+              width: 100,
+              fit: BoxFit.fill,
+            );
+          }
+          return const SizedBox(
+            width: 100,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        },
+      ),
     );
   }
 }

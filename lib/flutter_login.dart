@@ -284,6 +284,7 @@ class FlutterLogin extends StatefulWidget {
     this.messages,
     this.theme,
     this.userValidator,
+    this.captchaValidator,
     this.validateUserImmediately,
     this.passwordValidator,
     this.onSubmitAnimationCompleted,
@@ -314,7 +315,11 @@ class FlutterLogin extends StatefulWidget {
     this.onSwitchToAdditionalFields,
     this.initialIsoCode,
     this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
+    this.captchaWidget,
+    this.captchaTextRatio = 1.0,
+    this.hideCaptchaTextField = false,
   })  : assert((logo is String?) || (logo is ImageProvider?)),
+        assert(captchaTextRatio >= 0.0 && captchaTextRatio <= 1.0),
         logo = logo is String ? AssetImage(logo) : logo as ImageProvider?;
 
   /// Called when the user hit the submit button when in sign up mode
@@ -356,6 +361,10 @@ class FlutterLogin extends StatefulWidget {
   /// invalid, or null otherwise
   final FormFieldValidator<String>? userValidator;
 
+  /// Captcha validating logic, Returns an error string to display if the input is
+  /// invalid, or null otherwise
+  final FormFieldValidator<String?>? captchaValidator;
+
   /// Should email be validated after losing focus [true] or after form
   /// submissions [false]. Default: [false]
   final bool? validateUserImmediately;
@@ -392,6 +401,9 @@ class FlutterLogin extends StatefulWidget {
 
   /// Set to true to hide the Forgot Password button
   final bool hideForgotPasswordButton;
+
+  /// Set to true hide the Captcha TextField
+  final bool hideCaptchaTextField;
 
   /// Set to false to return back to sign in page after successful sign up
   final bool loginAfterSignUp;
@@ -462,9 +474,19 @@ class FlutterLogin extends StatefulWidget {
 
   final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
 
+  final Widget? captchaWidget;
+  final double captchaTextRatio;
+
   static String? defaultEmailValidator(String? value) {
     if (value == null || value.isEmpty || !email.hasMatch(value)) {
       return 'Invalid email!';
+    }
+    return null;
+  }
+
+  static String? defaultCaptchaValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Invalid captcha!';
     }
     return null;
   }
@@ -770,6 +792,8 @@ class _FlutterLoginState extends State<FlutterLogin>
     final headerHeight = cardTopPosition - headerMargin;
     final userValidator =
         widget.userValidator ?? FlutterLogin.defaultEmailValidator;
+    final captchaValidator =
+        widget.captchaValidator ?? FlutterLogin.defaultCaptchaValidator;
     final validateUserImmediately = widget.validateUserImmediately ?? false;
     final passwordValidator =
         widget.passwordValidator ?? FlutterLogin.defaultPasswordValidator;
@@ -838,6 +862,7 @@ class _FlutterLoginState extends State<FlutterLogin>
                         padding: EdgeInsets.only(top: cardTopPosition),
                         loadingController: _loadingController,
                         userValidator: userValidator,
+                        captchaValidator: captchaValidator,
                         validateUserImmediately: validateUserImmediately,
                         passwordValidator: passwordValidator,
                         onSubmit: _reverseHeaderAnimation,
@@ -858,6 +883,9 @@ class _FlutterLoginState extends State<FlutterLogin>
                             widget.confirmSignupKeyboardType,
                         introWidget: widget.headerWidget,
                         initialIsoCode: widget.initialIsoCode,
+                        captchaTextRatio: widget.captchaTextRatio,
+                        captchaWidget: widget.captchaWidget,
+                        hideCaptchaTextField: widget.hideCaptchaTextField,
                       ),
                     ),
                     Positioned(

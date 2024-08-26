@@ -37,12 +37,14 @@ class AuthCard extends StatefulWidget {
     this.padding = EdgeInsets.zero,
     required this.loadingController,
     this.userValidator,
+    this.captchaValidator,
     this.validateUserImmediately,
     this.passwordValidator,
     this.onSubmit,
     this.onSubmitCompleted,
     this.hideForgotPasswordButton = false,
     this.hideSignUpButton = false,
+    this.hideCaptchaTextField = false,
     this.loginAfterSignUp = true,
     this.hideProvidersTitle = false,
     this.additionalSignUpFields,
@@ -54,17 +56,21 @@ class AuthCard extends StatefulWidget {
     this.introWidget,
     required this.initialIsoCode,
     this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
+    this.captchaWidget,
+    this.captchaTextRatio = 1.0,
   });
 
   final EdgeInsets padding;
   final AnimationController loadingController;
   final FormFieldValidator<String>? userValidator;
+  final FormFieldValidator<String>? captchaValidator;
   final bool? validateUserImmediately;
   final FormFieldValidator<String>? passwordValidator;
   final VoidCallback? onSubmit;
   final VoidCallback? onSubmitCompleted;
   final bool hideForgotPasswordButton;
   final bool hideSignUpButton;
+  final bool hideCaptchaTextField;
   final bool loginAfterSignUp;
   final LoginUserType userType;
   final bool hideProvidersTitle;
@@ -82,6 +88,9 @@ class AuthCard extends StatefulWidget {
   final TextInputType? confirmSignupKeyboardType;
   final Widget? introWidget;
   final String? initialIsoCode;
+
+  final Widget? captchaWidget;
+  final double captchaTextRatio;
 
   @override
   AuthCardState createState() => AuthCardState();
@@ -361,6 +370,7 @@ class AuthCardState extends State<AuthCard> with TickerProviderStateMixin {
             userType: widget.userType,
             loadingController: formController,
             userValidator: widget.userValidator,
+            captchaValidator: widget.captchaValidator,
             validateUserImmediately: widget.validateUserImmediately,
             passwordValidator: widget.passwordValidator,
             requireAdditionalSignUpFields:
@@ -381,6 +391,9 @@ class AuthCardState extends State<AuthCard> with TickerProviderStateMixin {
             hideProvidersTitle: widget.hideProvidersTitle,
             introWidget: widget.introWidget,
             initialIsoCode: widget.initialIsoCode,
+            hideCaptchaTextField: widget.hideCaptchaTextField,
+            captchaWidget: widget.captchaWidget,
+            captchaTextRatio: widget.captchaTextRatio,
           ),
         );
       case _recoveryIndex:

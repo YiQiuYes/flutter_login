@@ -56,6 +56,7 @@ class Auth with ChangeNotifier {
     this.onResendCode,
     this.beforeAdditionalFieldsCallback,
     String email = '',
+    String captcha = '',
     String password = '',
     String confirmPassword = '',
     AuthMode initialAuthMode = AuthMode.login,
@@ -63,7 +64,8 @@ class Auth with ChangeNotifier {
   })  : _email = email,
         _password = password,
         _confirmPassword = confirmPassword,
-        _mode = initialAuthMode;
+        _mode = initialAuthMode,
+        _captcha = captcha;
 
   final LoginCallback? onLogin;
   final SignupCallback? onSignup;
@@ -113,6 +115,13 @@ class Auth with ChangeNotifier {
   String get email => _email;
   set email(String email) {
     _email = email;
+    notifyListeners();
+  }
+
+  String _captcha = '';
+  String get captcha  => _captcha;
+  set captcha(String captcha) {
+    _captcha = captcha;
     notifyListeners();
   }
 

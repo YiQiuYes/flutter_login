@@ -8,6 +8,7 @@ class _LoginCard extends StatefulWidget {
     super.key,
     required this.loadingController,
     required this.userValidator,
+    required this.captchaValidator,
     required this.validateUserImmediately,
     required this.passwordValidator,
     required this.onSwitchRecoveryPassword,
@@ -21,12 +22,16 @@ class _LoginCard extends StatefulWidget {
     this.hideSignUpButton = false,
     this.loginAfterSignUp = true,
     this.hideProvidersTitle = false,
+    this.hideCaptchaTextField = false,
     this.introWidget,
     required this.initialIsoCode,
+    this.captchaTextRatio = 1.0,
+    this.captchaWidget,
   });
 
   final AnimationController loadingController;
   final FormFieldValidator<String>? userValidator;
+  final FormFieldValidator<String>? captchaValidator;
   final bool? validateUserImmediately;
   final FormFieldValidator<String>? passwordValidator;
   final VoidCallback onSwitchRecoveryPassword;
@@ -37,11 +42,14 @@ class _LoginCard extends StatefulWidget {
   final bool hideSignUpButton;
   final bool loginAfterSignUp;
   final bool hideProvidersTitle;
+  final bool hideCaptchaTextField;
   final LoginUserType userType;
   final bool requireAdditionalSignUpFields;
   final Future<bool> Function() requireSignUpConfirmation;
   final Widget? introWidget;
   final String? initialIsoCode;
+  final double captchaTextRatio;
+  final Widget? captchaWidget;
 
   @override
   _LoginCardState createState() => _LoginCardState();
@@ -52,16 +60,19 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
 
   final _userFieldKey = GlobalKey<FormFieldState>();
   final _userFocusNode = FocusNode();
+  final _captchaFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
   final _confirmPasswordFocusNode = FocusNode();
 
   late TextEditingController _nameController;
+  late TextEditingController _captchaController;
   late TextEditingController _passController;
   late TextEditingController _confirmPassController;
 
   var _isLoading = false;
   var _isSubmitting = false;
   var _showShadow = true;
+  var _isCaptchaEmpty = false;
 
   /// switch between login and signup
   late AnimationController _switchAuthController;
@@ -72,6 +83,8 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
   List<AnimationController> _providerControllerList = <AnimationController>[];
 
   Interval? _nameTextFieldLoadingAnimationInterval;
+  Interval? _captchaTextFieldLoadingAnimationInterval;
+  Interval? _captchaImageLoadingAnimationInterval;
   Interval? _passTextFieldLoadingAnimationInterval;
   Interval? _textButtonLoadingAnimationInterval;
   late Animation<double> _buttonScaleAnimation;
@@ -84,6 +97,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
 
     final auth = Provider.of<Auth>(context, listen: false);
     _nameController = TextEditingController(text: auth.email);
+    _captchaController = TextEditingController(text: auth.captcha);
     _passController = TextEditingController(text: auth.password);
     _confirmPassController = TextEditingController(text: auth.confirmPassword);
 
@@ -111,9 +125,12 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
         .toList();
 
     _nameTextFieldLoadingAnimationInterval = const Interval(0, .85);
+    _captchaTextFieldLoadingAnimationInterval = const Interval(0, .85);
     _passTextFieldLoadingAnimationInterval = const Interval(.15, 1.0);
     _textButtonLoadingAnimationInterval =
         const Interval(.6, 1.0, curve: Curves.easeOut);
+    _captchaImageLoadingAnimationInterval =
+        const Interval(.3, 1.0, curve: Curves.easeOut);
     _buttonScaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: widget.loadingController,
@@ -142,6 +159,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
   void dispose() {
     widget.loadingController.removeStatusListener(handleLoadingAnimationStatus);
     _userFocusNode.dispose();
+    _captchaFocusNode.dispose();
     _passwordFocusNode.dispose();
     _confirmPasswordFocusNode.dispose();
 
@@ -394,6 +412,59 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
       onSaved: (value) => auth.email = value!,
       enabled: !_isSubmitting,
       initialIsoCode: widget.initialIsoCode,
+    );
+  }
+
+  Widget _buildCaptchaField(
+    double width,
+    LoginMessages messages,
+    Auth auth,
+  ) {
+    String? validator(String? value) {
+      _captchaController.text.isEmpty
+          ? _isCaptchaEmpty = true
+          : _isCaptchaEmpty = false;
+      return widget.captchaValidator?.call(value);
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: _isCaptchaEmpty
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.center,
+      children: [
+        AnimatedTextFormField(
+          textFormFieldKey: _userFieldKey,
+          userType: widget.userType,
+          controller: _captchaController,
+          width: width * widget.captchaTextRatio,
+          loadingController: widget.loadingController,
+          interval: _captchaTextFieldLoadingAnimationInterval,
+          labelText:
+              messages.captchaHint ?? getLabelText(LoginUserType.captcha),
+          autofillHints:
+              _isSubmitting ? null : [getAutofillHints(widget.userType)],
+          prefixIcon: getPrefixIcon(LoginUserType.captcha),
+          keyboardType: getKeyboardType(widget.userType),
+          textInputAction: TextInputAction.next,
+          focusNode: _captchaFocusNode,
+          onFieldSubmitted: (value) {
+            FocusScope.of(context).requestFocus(_passwordFocusNode);
+          },
+          validator: validator,
+          onSaved: (value) => auth.captcha = value!,
+          enabled: !_isSubmitting,
+          initialIsoCode: widget.initialIsoCode,
+        ),
+        if (widget.captchaWidget != null)
+        FadeIn(
+          controller: widget.loadingController,
+          offset: .5,
+          curve: _captchaImageLoadingAnimationInterval,
+          fadeDirection: FadeDirection.endToStart,
+          child: widget.captchaWidget,
+        ),
+      ],
     );
   }
 
@@ -717,6 +788,9 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
                   if (widget.introWidget != null) widget.introWidget!,
                   _buildUserField(textFieldWidth, messages, auth),
                   const SizedBox(height: 20),
+                  if (!widget.hideCaptchaTextField)
+                    _buildCaptchaField(textFieldWidth, messages, auth),
+                  if (!widget.hideCaptchaTextField) const SizedBox(height: 20),
                   _buildPasswordField(textFieldWidth, messages, auth),
                   const SizedBox(height: 10),
                 ],

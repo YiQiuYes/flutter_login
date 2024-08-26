@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class LoginMessages with ChangeNotifier {
   LoginMessages({
     this.userHint,
+    this.captchaHint,
     this.passwordHint = defaultPasswordHint,
     this.confirmPasswordHint = defaultConfirmPasswordHint,
     this.forgotPasswordButton = defaultForgotPasswordButton,
@@ -81,6 +82,10 @@ class LoginMessages with ChangeNotifier {
   /// Hint text of the userHint [TextField]
   /// Default will be selected based on userType
   final String? userHint;
+
+  /// Hint text of the captchaHint [TextField]
+  /// Default will be selected based on userType
+  final String? captchaHint;
 
   /// Additional signup form button's label
   final String additionalSignUpSubmitButton;

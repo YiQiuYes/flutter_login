@@ -45,6 +45,8 @@ Icon getPrefixIcon(LoginUserType userType) {
     case LoginUserType.phone:
     case LoginUserType.intlPhone:
       return const Icon(FontAwesomeIcons.squarePhoneFlip);
+    case LoginUserType.captcha:
+      return const Icon(FontAwesomeIcons.shieldHalved);
     case LoginUserType.email:
     default:
       return const Icon(FontAwesomeIcons.squareEnvelope);
@@ -62,6 +64,8 @@ String getLabelText(LoginUserType userType) {
     case LoginUserType.phone:
     case LoginUserType.intlPhone:
       return "Phone";
+    case LoginUserType.captcha:
+      return "Captcha";
     case LoginUserType.email:
     default:
       return "Email";
