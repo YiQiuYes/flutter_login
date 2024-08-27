@@ -25,6 +25,7 @@ class _LoginCard extends StatefulWidget {
     this.hideProvidersTitle = false,
     this.hideCaptchaTextField = false,
     this.hideMessageCodeTextField = false,
+    this.hidePasswordTextField = false,
     this.introWidget,
     required this.initialIsoCode,
     this.captchaTextRatio = 1.0,
@@ -49,6 +50,7 @@ class _LoginCard extends StatefulWidget {
   final bool hideProvidersTitle;
   final bool hideCaptchaTextField;
   final bool hideMessageCodeTextField;
+  final bool hidePasswordTextField;
   final LoginUserType userType;
   final bool requireAdditionalSignUpFields;
   final Future<bool> Function() requireSignUpConfirmation;
@@ -864,6 +866,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
                   if (!widget.hideCaptchaTextField)
                     _buildCaptchaField(textFieldWidth, messages, auth),
                   if (!widget.hideCaptchaTextField) const SizedBox(height: 20),
+                  if (!widget.hidePasswordTextField)
                   _buildPasswordField(textFieldWidth, messages, auth),
                   if (!widget.hideMessageCodeTextField) const SizedBox(height: 20),
                   if (!widget.hideMessageCodeTextField)

@@ -41,6 +41,7 @@ class AuthCard extends StatefulWidget {
     this.messageCodeValidator,
     this.validateUserImmediately,
     this.passwordValidator,
+    this.hidePasswordTextField = false,
     this.onSubmit,
     this.onSubmitCompleted,
     this.hideForgotPasswordButton = false,
@@ -77,6 +78,7 @@ class AuthCard extends StatefulWidget {
   final bool hideSignUpButton;
   final bool hideCaptchaTextField;
   final bool hideMessageCodeTextField;
+  final bool hidePasswordTextField;
   final bool loginAfterSignUp;
   final LoginUserType userType;
   final bool hideProvidersTitle;
@@ -398,6 +400,7 @@ class AuthCardState extends State<AuthCard> with TickerProviderStateMixin {
             onSwitchConfirmSignup: () => _changeCard(_confirmSignup),
             hideSignUpButton: widget.hideSignUpButton,
             hideForgotPasswordButton: widget.hideForgotPasswordButton,
+            hidePasswordTextField: widget.hidePasswordTextField,
             loginAfterSignUp: widget.loginAfterSignUp,
             hideProvidersTitle: widget.hideProvidersTitle,
             introWidget: widget.introWidget,

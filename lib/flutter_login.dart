@@ -322,6 +322,7 @@ class FlutterLogin extends StatefulWidget {
     this.messageCodeWidget,
     this.messageCodeTextRatio = 1.0,
     this.hideMessageCodeTextField = false,
+    this.hidePasswordTextField = false,
   })  : assert((logo is String?) || (logo is ImageProvider?)),
         assert(captchaTextRatio >= 0.0 && captchaTextRatio <= 1.0),
         assert(messageCodeTextRatio >= 0.0 && messageCodeTextRatio <= 1.0),
@@ -416,6 +417,9 @@ class FlutterLogin extends StatefulWidget {
 
   /// Set to true hide the MessageCode TextField
   final bool hideMessageCodeTextField;
+
+  /// Set to true hide the Password TextField
+  final bool hidePasswordTextField;
 
   /// Set to false to return back to sign in page after successful sign up
   final bool loginAfterSignUp;
@@ -907,6 +911,7 @@ class _FlutterLoginState extends State<FlutterLogin>
                         messageCodeWidget: widget.messageCodeWidget,
                         messageCodeTextRatio: widget.messageCodeTextRatio,
                         hideMessageCodeTextField: widget.hideMessageCodeTextField,
+                        hidePasswordTextField: widget.hidePasswordTextField,
                       ),
                     ),
                     Positioned(
