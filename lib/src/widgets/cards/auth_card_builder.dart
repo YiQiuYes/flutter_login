@@ -38,6 +38,7 @@ class AuthCard extends StatefulWidget {
     required this.loadingController,
     this.userValidator,
     this.captchaValidator,
+    this.messageCodeValidator,
     this.validateUserImmediately,
     this.passwordValidator,
     this.onSubmit,
@@ -45,6 +46,7 @@ class AuthCard extends StatefulWidget {
     this.hideForgotPasswordButton = false,
     this.hideSignUpButton = false,
     this.hideCaptchaTextField = false,
+    this.hideMessageCodeTextField = false,
     this.loginAfterSignUp = true,
     this.hideProvidersTitle = false,
     this.additionalSignUpFields,
@@ -58,12 +60,15 @@ class AuthCard extends StatefulWidget {
     this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     this.captchaWidget,
     this.captchaTextRatio = 1.0,
+    this.messageCodeWidget,
+    this.messageCodeTextRatio = 1.0,
   });
 
   final EdgeInsets padding;
   final AnimationController loadingController;
   final FormFieldValidator<String>? userValidator;
   final FormFieldValidator<String>? captchaValidator;
+  final FormFieldValidator<String>? messageCodeValidator;
   final bool? validateUserImmediately;
   final FormFieldValidator<String>? passwordValidator;
   final VoidCallback? onSubmit;
@@ -71,6 +76,7 @@ class AuthCard extends StatefulWidget {
   final bool hideForgotPasswordButton;
   final bool hideSignUpButton;
   final bool hideCaptchaTextField;
+  final bool hideMessageCodeTextField;
   final bool loginAfterSignUp;
   final LoginUserType userType;
   final bool hideProvidersTitle;
@@ -91,6 +97,8 @@ class AuthCard extends StatefulWidget {
 
   final Widget? captchaWidget;
   final double captchaTextRatio;
+  final Widget? messageCodeWidget;
+  final double messageCodeTextRatio;
 
   @override
   AuthCardState createState() => AuthCardState();
@@ -356,6 +364,7 @@ class AuthCardState extends State<AuthCard> with TickerProviderStateMixin {
               name: auth.email,
               password: auth.password,
               captcha: auth.captcha,
+              messageCode: auth.messageCode,
             ),
           ) ??
           true;
@@ -372,6 +381,7 @@ class AuthCardState extends State<AuthCard> with TickerProviderStateMixin {
             loadingController: formController,
             userValidator: widget.userValidator,
             captchaValidator: widget.captchaValidator,
+            messageCodeValidator: widget.messageCodeValidator,
             validateUserImmediately: widget.validateUserImmediately,
             passwordValidator: widget.passwordValidator,
             requireAdditionalSignUpFields:
@@ -395,6 +405,9 @@ class AuthCardState extends State<AuthCard> with TickerProviderStateMixin {
             hideCaptchaTextField: widget.hideCaptchaTextField,
             captchaWidget: widget.captchaWidget,
             captchaTextRatio: widget.captchaTextRatio,
+            hideMessageCodeTextField: widget.hideMessageCodeTextField,
+            messageCodeTextRatio: widget.messageCodeTextRatio,
+            messageCodeWidget: widget.messageCodeWidget,
           ),
         );
       case _recoveryIndex:

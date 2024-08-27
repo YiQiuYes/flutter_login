@@ -47,6 +47,8 @@ Icon getPrefixIcon(LoginUserType userType) {
       return const Icon(FontAwesomeIcons.squarePhoneFlip);
     case LoginUserType.captcha:
       return const Icon(FontAwesomeIcons.shieldHalved);
+    case LoginUserType.messageCode:
+      return const Icon(FontAwesomeIcons.commentSms);
     case LoginUserType.email:
     default:
       return const Icon(FontAwesomeIcons.squareEnvelope);

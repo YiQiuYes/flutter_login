@@ -7,5 +7,6 @@ enum LoginUserType {
   text,
   intlPhone,
   checkbox,
-  captcha
+  captcha,
+  messageCode,
 }

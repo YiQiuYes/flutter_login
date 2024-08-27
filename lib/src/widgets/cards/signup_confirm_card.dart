@@ -66,6 +66,7 @@ class _ConfirmSignupCardState extends State<_ConfirmSignupCard>
         name: auth.email,
         password: auth.password,
         captcha: auth.captcha,
+        messageCode: auth.messageCode,
       ),
     );
 

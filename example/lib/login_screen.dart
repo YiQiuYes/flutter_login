@@ -249,6 +249,7 @@ class LoginScreen extends StatelessWidget {
         debugPrint('Name: ${loginData.name}');
         debugPrint('Password: ${loginData.password}');
         debugPrint('Captcha: ${loginData.captcha}');
+        debugPrint('MessageCode: ${loginData.messageCode}');
         return _loginUser(loginData);
       },
       onSignup: (signupData) {
@@ -301,6 +302,17 @@ class LoginScreen extends StatelessWidget {
             child: Center(child: CircularProgressIndicator()),
           );
         },
+      ),
+      messageCodeTextRatio: 2 / 3,
+      messageCodeValidator: (value) {
+        if (value!.isEmpty) {
+          return 'Message code is empty';
+        }
+        return null;
+      },
+      messageCodeWidget: SizedBox(
+        width: 100,
+        child: ElevatedButton(onPressed: () {}, child: Text("发送")),
       ),
     );
   }

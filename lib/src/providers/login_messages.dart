@@ -4,6 +4,7 @@ class LoginMessages with ChangeNotifier {
   LoginMessages({
     this.userHint,
     this.captchaHint,
+    this.messageCodeHint,
     this.passwordHint = defaultPasswordHint,
     this.confirmPasswordHint = defaultConfirmPasswordHint,
     this.forgotPasswordButton = defaultForgotPasswordButton,
@@ -86,6 +87,10 @@ class LoginMessages with ChangeNotifier {
   /// Hint text of the captchaHint [TextField]
   /// Default will be selected based on userType
   final String? captchaHint;
+
+  /// Hint text of the messageCodeHint [TextField]
+  /// Default will be selected based on userType
+  final String? messageCodeHint;
 
   /// Additional signup form button's label
   final String additionalSignUpSubmitButton;

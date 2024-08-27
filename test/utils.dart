@@ -25,8 +25,10 @@ final mockCallback = MockCallback();
 List<LoginData> loginStubCallback(MockCallback mockCallback) {
   reset(mockCallback);
 
-  final user = LoginData(name: 'near@gmail.com', password: '12345', captcha: '');
-  final invalidUser = LoginData(name: 'not.exists@gmail.com', password: '', captcha: '');
+  final user = LoginData(
+      name: 'near@gmail.com', password: '12345', captcha: '', messageCode: '');
+  final invalidUser = LoginData(
+      name: 'not.exists@gmail.com', password: '', captcha: '', messageCode: '');
 
   when(mockCallback.userValidator(user.name)).thenReturn(null);
   when(mockCallback.userValidator('invalid-name')).thenReturn('Invalid!');

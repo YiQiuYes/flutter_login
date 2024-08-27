@@ -65,6 +65,7 @@ class _ConfirmRecoverCardState extends State<_ConfirmRecoverCard>
         name: auth.email,
         password: auth.password,
         captcha: auth.captcha,
+        messageCode: auth.messageCode,
       ),
     );
 

@@ -4,8 +4,13 @@ class LoginData {
   final String name;
   final String password;
   final String captcha;
+  final String messageCode;
 
-  LoginData({required this.name, required this.password, required this.captcha});
+  LoginData(
+      {required this.name,
+      required this.password,
+      required this.captcha,
+      required this.messageCode});
 
   @override
   String toString() {
@@ -15,11 +20,14 @@ class LoginData {
   @override
   bool operator ==(Object other) {
     if (other is LoginData) {
-      return name == other.name && password == other.password && captcha == other.captcha;
+      return name == other.name &&
+          password == other.password &&
+          captcha == other.captcha &&
+          messageCode == other.messageCode;
     }
     return false;
   }
 
   @override
-  int get hashCode => hash3(name, password, captcha);
+  int get hashCode => hash4(name, password, captcha, messageCode);
 }

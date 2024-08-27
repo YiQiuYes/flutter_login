@@ -9,6 +9,7 @@ class _LoginCard extends StatefulWidget {
     required this.loadingController,
     required this.userValidator,
     required this.captchaValidator,
+    required this.messageCodeValidator,
     required this.validateUserImmediately,
     required this.passwordValidator,
     required this.onSwitchRecoveryPassword,
@@ -23,15 +24,19 @@ class _LoginCard extends StatefulWidget {
     this.loginAfterSignUp = true,
     this.hideProvidersTitle = false,
     this.hideCaptchaTextField = false,
+    this.hideMessageCodeTextField = false,
     this.introWidget,
     required this.initialIsoCode,
     this.captchaTextRatio = 1.0,
     this.captchaWidget,
+    this.messageCodeTextRatio = 1.0,
+    this.messageCodeWidget,
   });
 
   final AnimationController loadingController;
   final FormFieldValidator<String>? userValidator;
   final FormFieldValidator<String>? captchaValidator;
+  final FormFieldValidator<String>? messageCodeValidator;
   final bool? validateUserImmediately;
   final FormFieldValidator<String>? passwordValidator;
   final VoidCallback onSwitchRecoveryPassword;
@@ -43,13 +48,16 @@ class _LoginCard extends StatefulWidget {
   final bool loginAfterSignUp;
   final bool hideProvidersTitle;
   final bool hideCaptchaTextField;
+  final bool hideMessageCodeTextField;
   final LoginUserType userType;
   final bool requireAdditionalSignUpFields;
   final Future<bool> Function() requireSignUpConfirmation;
   final Widget? introWidget;
   final String? initialIsoCode;
   final double captchaTextRatio;
+  final double messageCodeTextRatio;
   final Widget? captchaWidget;
+  final Widget? messageCodeWidget;
 
   @override
   _LoginCardState createState() => _LoginCardState();
@@ -61,11 +69,13 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
   final _userFieldKey = GlobalKey<FormFieldState>();
   final _userFocusNode = FocusNode();
   final _captchaFocusNode = FocusNode();
+  final _messageCodeFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
   final _confirmPasswordFocusNode = FocusNode();
 
   late TextEditingController _nameController;
   late TextEditingController _captchaController;
+  late TextEditingController _messageCodeController;
   late TextEditingController _passController;
   late TextEditingController _confirmPassController;
 
@@ -73,6 +83,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
   var _isSubmitting = false;
   var _showShadow = true;
   var _isCaptchaEmpty = false;
+  var _isMessageCodeEmpty = false;
 
   /// switch between login and signup
   late AnimationController _switchAuthController;
@@ -85,6 +96,8 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
   Interval? _nameTextFieldLoadingAnimationInterval;
   Interval? _captchaTextFieldLoadingAnimationInterval;
   Interval? _captchaImageLoadingAnimationInterval;
+  Interval? _messageCodeTextFieldLoadingAnimationInterval;
+  Interval? _messageCodeWidgetLoadingAnimationInterval;
   Interval? _passTextFieldLoadingAnimationInterval;
   Interval? _textButtonLoadingAnimationInterval;
   late Animation<double> _buttonScaleAnimation;
@@ -98,6 +111,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     final auth = Provider.of<Auth>(context, listen: false);
     _nameController = TextEditingController(text: auth.email);
     _captchaController = TextEditingController(text: auth.captcha);
+    _messageCodeController = TextEditingController(text: auth.messageCode);
     _passController = TextEditingController(text: auth.password);
     _confirmPassController = TextEditingController(text: auth.confirmPassword);
 
@@ -126,10 +140,13 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
 
     _nameTextFieldLoadingAnimationInterval = const Interval(0, .85);
     _captchaTextFieldLoadingAnimationInterval = const Interval(0, .85);
+    _messageCodeTextFieldLoadingAnimationInterval = const Interval(0, .85);
     _passTextFieldLoadingAnimationInterval = const Interval(.15, 1.0);
     _textButtonLoadingAnimationInterval =
         const Interval(.6, 1.0, curve: Curves.easeOut);
     _captchaImageLoadingAnimationInterval =
+        const Interval(.3, 1.0, curve: Curves.easeOut);
+    _messageCodeWidgetLoadingAnimationInterval =
         const Interval(.3, 1.0, curve: Curves.easeOut);
     _buttonScaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -160,6 +177,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     widget.loadingController.removeStatusListener(handleLoadingAnimationStatus);
     _userFocusNode.dispose();
     _captchaFocusNode.dispose();
+    _messageCodeFocusNode.dispose();
     _passwordFocusNode.dispose();
     _confirmPasswordFocusNode.dispose();
 
@@ -208,6 +226,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
           name: auth.email,
           password: auth.password,
           captcha: auth.captcha,
+          messageCode: auth.messageCode,
         ),
       );
     } else {
@@ -458,13 +477,66 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
           initialIsoCode: widget.initialIsoCode,
         ),
         if (widget.captchaWidget != null)
-        FadeIn(
-          controller: widget.loadingController,
-          offset: .5,
-          curve: _captchaImageLoadingAnimationInterval,
-          fadeDirection: FadeDirection.endToStart,
-          child: widget.captchaWidget,
+          FadeIn(
+            controller: widget.loadingController,
+            offset: .5,
+            curve: _captchaImageLoadingAnimationInterval,
+            fadeDirection: FadeDirection.endToStart,
+            child: widget.captchaWidget,
+          ),
+      ],
+    );
+  }
+
+  Widget _buildMessageCodeField(
+    double width,
+    LoginMessages messages,
+    Auth auth,
+  ) {
+    String? validator(String? value) {
+      _messageCodeController.text.isEmpty
+          ? _isMessageCodeEmpty = true
+          : _isMessageCodeEmpty = false;
+      return widget.messageCodeValidator?.call(value);
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: _isMessageCodeEmpty
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.center,
+      children: [
+        AnimatedTextFormField(
+          textFormFieldKey: _userFieldKey,
+          userType: widget.userType,
+          controller: _messageCodeController,
+          width: width * widget.messageCodeTextRatio,
+          loadingController: widget.loadingController,
+          interval: _messageCodeTextFieldLoadingAnimationInterval,
+          labelText: messages.messageCodeHint ??
+              getLabelText(LoginUserType.messageCode),
+          autofillHints:
+              _isSubmitting ? null : [getAutofillHints(widget.userType)],
+          prefixIcon: getPrefixIcon(LoginUserType.messageCode),
+          keyboardType: getKeyboardType(widget.userType),
+          textInputAction: TextInputAction.next,
+          focusNode: _messageCodeFocusNode,
+          onFieldSubmitted: (value) {
+            FocusScope.of(context).requestFocus(_passwordFocusNode);
+          },
+          validator: validator,
+          onSaved: (value) => auth.messageCode = value!,
+          enabled: !_isSubmitting,
+          initialIsoCode: widget.initialIsoCode,
         ),
+        if (widget.messageCodeWidget != null)
+          FadeIn(
+            controller: widget.loadingController,
+            offset: .5,
+            curve: _messageCodeWidgetLoadingAnimationInterval,
+            fadeDirection: FadeDirection.endToStart,
+            child: widget.messageCodeWidget,
+          ),
       ],
     );
   }
@@ -793,6 +865,9 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
                     _buildCaptchaField(textFieldWidth, messages, auth),
                   if (!widget.hideCaptchaTextField) const SizedBox(height: 20),
                   _buildPasswordField(textFieldWidth, messages, auth),
+                  if (!widget.hideMessageCodeTextField) const SizedBox(height: 20),
+                  if (!widget.hideMessageCodeTextField)
+                    _buildMessageCodeField(textFieldWidth, messages, auth),
                   const SizedBox(height: 10),
                 ],
               ),
