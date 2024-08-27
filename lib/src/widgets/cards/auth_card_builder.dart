@@ -355,6 +355,7 @@ class AuthCardState extends State<AuthCard> with TickerProviderStateMixin {
             LoginData(
               name: auth.email,
               password: auth.password,
+              captcha: auth.captcha,
             ),
           ) ??
           true;
