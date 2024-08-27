@@ -867,8 +867,8 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
                     _buildCaptchaField(textFieldWidth, messages, auth),
                   if (!widget.hideCaptchaTextField) const SizedBox(height: 20),
                   if (!widget.hidePasswordTextField)
-                  _buildPasswordField(textFieldWidth, messages, auth),
-                  if (!widget.hideMessageCodeTextField) const SizedBox(height: 20),
+                    _buildPasswordField(textFieldWidth, messages, auth),
+                  if (!widget.hidePasswordTextField) const SizedBox(height: 20),
                   if (!widget.hideMessageCodeTextField)
                     _buildMessageCodeField(textFieldWidth, messages, auth),
                   const SizedBox(height: 10),
