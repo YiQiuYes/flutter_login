@@ -55,6 +55,7 @@ class AnimatedTextFormField extends StatefulWidget {
     this.autofillHints,
     this.tooltip,
     required this.initialIsoCode,
+    this.onInputChanged,
   }) : assert(
           (inertiaController == null && inertiaDirection == null) ||
               (inertiaController != null && inertiaDirection != null),
@@ -84,6 +85,7 @@ class AnimatedTextFormField extends StatefulWidget {
   final TextFieldInertiaDirection? inertiaDirection;
   final InlineSpan? tooltip;
   final String? initialIsoCode;
+  final ValueChanged<String>? onInputChanged;
 
   @override
   State<AnimatedTextFormField> createState() => _AnimatedTextFormFieldState();
@@ -308,6 +310,7 @@ class _AnimatedTextFormFieldState extends State<AnimatedTextFormField> {
                 ),
                 '',
               );
+              widget.onInputChanged?.call(_phoneNumberController.text);
             }
             _phoneNumberController.selection = TextSelection.collapsed(
               offset: _phoneNumberController.text.length,
@@ -335,6 +338,7 @@ class _AnimatedTextFormFieldState extends State<AnimatedTextFormField> {
         onChanged: (value) {
           widget.onSaved?.call((value ?? false).toString());
           widget.controller?.text = (value ?? false).toString();
+          widget.onInputChanged?.call(widget.controller?.text ?? '');
         },
         title: widget.linkUrl != null
             ? InkWell(
@@ -382,6 +386,9 @@ class _AnimatedTextFormFieldState extends State<AnimatedTextFormField> {
         enabled: widget.enabled,
         autocorrect: widget.autocorrect,
         autofillHints: widget.autofillHints,
+        onChanged: (value) {
+          widget.onInputChanged?.call(value);
+        },
       );
     }
 
@@ -460,6 +467,7 @@ class AnimatedPasswordTextFormField extends StatefulWidget {
     this.onSaved,
     this.autofillHints,
     required this.initialIsoCode,
+    this.onInputChanged,
   }) : assert(
           (inertiaController == null && inertiaDirection == null) ||
               (inertiaController != null && inertiaDirection != null),
@@ -481,6 +489,7 @@ class AnimatedPasswordTextFormField extends StatefulWidget {
   final TextFieldInertiaDirection? inertiaDirection;
   final Iterable<String>? autofillHints;
   final String? initialIsoCode;
+  final ValueChanged<String>? onInputChanged;
 
   @override
   State<AnimatedPasswordTextFormField> createState() =>
@@ -541,6 +550,7 @@ class _AnimatedPasswordTextFormFieldState
       onSaved: widget.onSaved,
       inertiaDirection: widget.inertiaDirection,
       initialIsoCode: widget.initialIsoCode,
+      onInputChanged: widget.onInputChanged,
     );
   }
 }

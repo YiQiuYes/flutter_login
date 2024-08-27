@@ -58,6 +58,10 @@ class LoginScreen extends StatelessWidget {
 
     return FlutterLogin(
       title: Constants.appName,
+      changeTextFieldCallback: (InputData inputData) {
+        debugPrint('Changesdfsdf');
+        debugPrint(inputData.toString());
+      },
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       logo: const AssetImage('assets/images/ecorp.png'),
       logoTag: Constants.logoTag,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_login/flutter_login.dart';
+import 'package:flutter_login/src/models/input_data.dart';
 
 enum AuthMode { signup, login }
 
@@ -9,6 +10,10 @@ enum AuthType { provider, userPassword }
 /// The callback triggered after login
 /// The result is an error message, callback successes if message is null
 typedef LoginCallback = Future<String?>? Function(LoginData);
+
+/// The callback triggered after login
+/// The result is an error message, callback successes if message is null
+typedef ChangeTextFieldCallback = Future<void>? Function(InputData);
 
 /// The callback triggered after signup
 /// The result is an error message, callback successes if message is null
@@ -55,6 +60,7 @@ class Auth with ChangeNotifier {
     this.confirmSignupRequired,
     this.onResendCode,
     this.beforeAdditionalFieldsCallback,
+    this.changeTextFieldCallback,
     String email = '',
     String captcha = '',
     String messageCode = '',
@@ -79,6 +85,7 @@ class Auth with ChangeNotifier {
   final SignupCallback? onResendCode;
   final List<TermOfService> termsOfService;
   final BeforeAdditionalFieldsCallback? beforeAdditionalFieldsCallback;
+  final ChangeTextFieldCallback? changeTextFieldCallback;
 
   AuthType _authType = AuthType.userPassword;
 

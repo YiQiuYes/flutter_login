@@ -24,6 +24,7 @@ import 'package:sign_in_button/sign_in_button.dart';
 
 export 'package:sign_in_button/src/button_list.dart';
 
+export 'src/models/input_data.dart';
 export 'src/models/login_data.dart';
 export 'src/models/login_user_type.dart';
 export 'src/models/signup_data.dart';
@@ -323,6 +324,7 @@ class FlutterLogin extends StatefulWidget {
     this.messageCodeTextRatio = 1.0,
     this.hideMessageCodeTextField = false,
     this.hidePasswordTextField = false,
+    this.changeTextFieldCallback,
   })  : assert((logo is String?) || (logo is ImageProvider?)),
         assert(captchaTextRatio >= 0.0 && captchaTextRatio <= 1.0),
         assert(messageCodeTextRatio >= 0.0 && messageCodeTextRatio <= 1.0),
@@ -445,9 +447,11 @@ class FlutterLogin extends StatefulWidget {
   /// Optional
   final ConfirmSignupCallback? onConfirmSignup;
 
-  // Additional option to decide in runtime if confirmation is required
-  // Optional
+  /// Additional option to decide in runtime if confirmation is required
+  /// Optional
   final ConfirmSignupRequiredCallback? confirmSignupRequired;
+
+  final ChangeTextFieldCallback? changeTextFieldCallback;
 
   /// Sets [TextInputType] of sign up confirmation form.
   ///
@@ -855,6 +859,7 @@ class _FlutterLoginState extends State<FlutterLogin>
             onResendCode: widget.onResendCode,
             termsOfService: widget.termsOfService,
             initialAuthMode: widget.initialAuthMode,
+            changeTextFieldCallback: widget.changeTextFieldCallback,
           ),
         ),
       ],

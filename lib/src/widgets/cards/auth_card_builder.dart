@@ -24,6 +24,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 
+import '../../models/input_data.dart';
+
 part 'additional_signup_card.dart';
 part 'login_card.dart';
 part 'recover_card.dart';

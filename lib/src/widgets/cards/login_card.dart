@@ -104,6 +104,14 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
   Interval? _textButtonLoadingAnimationInterval;
   late Animation<double> _buttonScaleAnimation;
 
+  /// input data
+  InputData _inputData = InputData(
+      name: '',
+      password: '',
+      captcha: '',
+      messageCode: '',
+      confirmPassword: '');
+
   bool get buttonEnabled => !_isLoading && !_isSubmitting;
 
   @override
@@ -434,6 +442,10 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
       onSaved: (value) => auth.email = value!,
       enabled: !_isSubmitting,
       initialIsoCode: widget.initialIsoCode,
+      onInputChanged: (value) {
+        _inputData.name = value;
+        auth.changeTextFieldCallback?.call(_inputData);
+      },
     );
   }
 
@@ -477,6 +489,10 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
           onSaved: (value) => auth.captcha = value!,
           enabled: !_isSubmitting,
           initialIsoCode: widget.initialIsoCode,
+          onInputChanged: (value) {
+            _inputData.captcha = value;
+            auth.changeTextFieldCallback?.call(_inputData);
+          },
         ),
         if (widget.captchaWidget != null)
           FadeIn(
@@ -530,6 +546,10 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
           onSaved: (value) => auth.messageCode = value!,
           enabled: !_isSubmitting,
           initialIsoCode: widget.initialIsoCode,
+          onInputChanged: (value) {
+            _inputData.messageCode = value;
+            auth.changeTextFieldCallback?.call(_inputData);
+          },
         ),
         if (widget.messageCodeWidget != null)
           FadeIn(
@@ -570,6 +590,10 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
       onSaved: (value) => auth.password = value!,
       enabled: !_isSubmitting,
       initialIsoCode: widget.initialIsoCode,
+      onInputChanged: (value) {
+        _inputData.password = value;
+        auth.changeTextFieldCallback?.call(_inputData);
+      },
     );
   }
 
@@ -599,6 +623,10 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
           : (value) => null,
       onSaved: (value) => auth.confirmPassword = value!,
       initialIsoCode: widget.initialIsoCode,
+      onInputChanged: (value) {
+        _inputData.confirmPassword = value;
+        auth.changeTextFieldCallback?.call(_inputData);
+      },
     );
   }
 
